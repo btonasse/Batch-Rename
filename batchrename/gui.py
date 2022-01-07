@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import better_widgets
 from better_widgets.widgets import FileDialogButton, myEntry, myCombobox
+from renam import BatchRename
 
 class App(better_widgets.App):
     '''Main GUI. Subclass of Tk'''
@@ -12,6 +13,20 @@ class App(better_widgets.App):
         self.mainframe.grid(row=0, column=0)
 
         self.update_screen_min_size()
+    
+    def rename(self, path: str, prefix: str, extension: str) -> None:
+        try:
+            ren = BatchRename(path, prefix, extension)
+        except Exception as err:
+            messagebox.showerror('Error!', err)
+            return
+        confirmation_message = ren.generate_confirmation_message()
+        goahead = messagebox.askokcancel('Rename all?', confirmation_message)
+        if goahead:
+            success = ren.rename_all_files()
+            if success:
+                messagebox.showinfo('Success!', 'Files successfully renamed!')
+
 
 class ExtSelection(myCombobox):
     def __init__(self, *args, **kwargs) -> None:
@@ -46,8 +61,8 @@ class MainWindow(tk.Frame):
         self.name_lbl = ttk.Label(self, text='New name')
         self.name_entry = myEntry(self, width=30)
 
-        self.rename_btn = ttk.Button(self, text='Rename', command=lambda : self.master.test_callback('rename_btn'))
-        self.close_btn = ttk.Button(self, text='Close', command=lambda : self.master.test_callback('close_btn'))
+        self.rename_btn = ttk.Button(self, text='Rename', command=lambda : self.master.rename(self.path_entry.value, self.name_entry.value, self.path_combo.value))
+        self.close_btn = ttk.Button(self, text='Close', command=self.master.destroy)
         
         self.show_widgets()       
 
