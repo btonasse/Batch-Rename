@@ -33,7 +33,7 @@ class BatchRename():
 		Generates number of files to be converted and the file naming convention that will be used
 		"""
 		new_name = self.prefix + '_[NUMBER].' + self.extension
-		return f"Do you want to rename {len(self.files)} files to {new_name}?"
+		return f"Do you want to rename {len(self.files)} files in {self.path} to {new_name}?"
 
 	def rename_all_files(self) -> bool:
 		"""
